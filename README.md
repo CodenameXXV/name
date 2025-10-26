@@ -1,2 +1,2 @@
 # name
-Transliteration of Cyrrilic names
+Transliteration of Cyrillic names
