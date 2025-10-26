@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Транслітерація | Ukrainian → English</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #e8e8e8;
+            background-image: repeating-linear-gradient(
+                transparent,
+                transparent 31px,
+                #94d3e8 31px,
+                #94d3e8 32px
+            );
+            background-attachment: fixed;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 60px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #000;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            transition: border-color 0.2s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #0066cc;
+        }
+
+        .result {
+            background: #f9f9f9;
+            padding: 16px;
+            border-radius: 4px;
+            border-left: 3px solid #0066cc;
+            min-height: 50px;
+            font-size: 18px;
+            color: #000;
+            word-break: break-word;
+        }
+
+        .result.empty {
+            color: #999;
+            font-size: 14px;
+        }
+
+        .note {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            font-size: 13px;
+            color: #666;
+            line-height: 1.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Транслітерація</h1>
+        <p class="subtitle">Українська → Латиниця (English)</p>
+
+        <label for="surname">Прізвище</label>
+        <input type="text" id="surname" placeholder="Наприклад: Шевченко">
+
+        <label for="name">Ім'я</label>
+        <input type="text" id="name" placeholder="Наприклад: Тарас">
+
+        <label>Результат</label>
+        <div class="result empty" id="result">Введіть прізвище та ім'я</div>
+
+        <div class="note">
+            <strong>Примітка:</strong> Транслітерація виконується згідно з постановою КМУ від 27 січня 2010 р. № 55. 
+            М'який знак та апостроф не відтворюються. Буквосполучення "зг" відтворюється як "zgh".
+        </div>
+    </div>
+
+    <script>
+        const translitMap = {
+            'а': 'a', 'б': 'b', 'в': 'v', 'г': 'h', 'ґ': 'g', 'д': 'd', 'е': 'e',
+            'ж': 'zh', 'з': 'z', 'и': 'y', 'і': 'i', 'к': 'k', 'л': 'l', 'м': 'm',
+            'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u',
+            'ф': 'f', 'х': 'kh', 'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'shch',
+            'А': 'A', 'Б': 'B', 'В': 'V', 'Г': 'H', 'Ґ': 'G', 'Д': 'D', 'Е': 'E',
+            'Ж': 'Zh', 'З': 'Z', 'И': 'Y', 'І': 'I', 'К': 'K', 'Л': 'L', 'М': 'M',
+            'Н': 'N', 'О': 'O', 'П': 'P', 'Р': 'R', 'С': 'S', 'Т': 'T', 'У': 'U',
+            'Ф': 'F', 'Х': 'Kh', 'Ц': 'Ts', 'Ч': 'Ch', 'Ш': 'Sh', 'Щ': 'Shch'
+        };
+
+        function transliterate(text) {
+            if (!text) return '';
+            
+            let result = '';
+            text = text.replace(/'/g, '').replace(/ь/g, '').replace(/Ь/g, '');
+            
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+                const lowerChar = char.toLowerCase();
+                const prevChar = i > 0 ? text[i - 1].toLowerCase() : '';
+                
+                // Обробка "зг"
+                if (lowerChar === 'г' && prevChar === 'з') {
+                    result = result.slice(0, -1) + (char === 'Г' ? 'Zgh' : 'zgh');
+                    continue;
+                }
+                
+                // Є
+                if (lowerChar === 'є') {
+                    if (i === 0) {
+                        result += char === 'Є' ? 'Ye' : 'ye';
+                    } else {
+                        result += char === 'Є' ? 'Ie' : 'ie';
+                    }
+                }
+                // Ї
+                else if (lowerChar === 'ї') {
+                    if (i === 0) {
+                        result += char === 'Ї' ? 'Yi' : 'yi';
+                    } else {
+                        result += char === 'Ї' ? 'I' : 'i';
+                    }
+                }
+                // Й
+                else if (lowerChar === 'й') {
+                    if (i === 0) {
+                        result += char === 'Й' ? 'Y' : 'y';
+                    } else {
+                        result += char === 'Й' ? 'I' : 'i';
+                    }
+                }
+                // Ю
+                else if (lowerChar === 'ю') {
+                    if (i === 0) {
+                        result += char === 'Ю' ? 'Yu' : 'yu';
+                    } else {
+                        result += char === 'Ю' ? 'Iu' : 'iu';
+                    }
+                }
+                // Я
+                else if (lowerChar === 'я') {
+                    if (i === 0) {
+                        result += char === 'Я' ? 'Ya' : 'ya';
+                    } else {
+                        result += char === 'Я' ? 'Ia' : 'ia';
+                    }
+                }
+                // Інші літери
+                else if (translitMap[char]) {
+                    result += translitMap[char];
+                }
+                // Символи, які не потребують транслітерації
+                else {
+                    result += char;
+                }
+            }
+            
+            return result;
+        }
+
+        function updateResult() {
+            const surname = document.getElementById('surname').value.trim();
+            const name = document.getElementById('name').value.trim();
+            const resultDiv = document.getElementById('result');
+            
+            if (!surname && !name) {
+                resultDiv.textContent = 'Введіть прізвище та ім\'я';
+                resultDiv.classList.add('empty');
+                return;
+            }
+            
+            const parts = [];
+            if (surname) parts.push(transliterate(surname));
+            if (name) parts.push(transliterate(name));
+            
+            resultDiv.textContent = parts.join(' ');
+            resultDiv.classList.remove('empty');
+        }
+
+        document.getElementById('surname').addEventListener('input', updateResult);
+        document.getElementById('name').addEventListener('input', updateResult);
+    </script>
+</body>
+</html>
